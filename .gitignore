@@ -1,3 +1,9 @@
 .env
 .venv/
 __pycache__/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data files (optional - you might want to commit these)
+# data/*.csv

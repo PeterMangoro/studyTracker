@@ -1,5 +1,5 @@
-streamlit==1.39.0
-pandas==2.2.2
-plotly==5.23.0
-python-dateutil==2.9.0.post0
-ulid-py==1.1.0
+streamlit>=1.28.0
+pandas>=2.0.0
+plotly>=5.0.0
+python-dateutil>=2.8.0
+ulid-py>=1.1.0
