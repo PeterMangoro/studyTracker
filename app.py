@@ -1,11 +1,23 @@
 import streamlit as st
 import pandas as pd
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+import pytz
 
 from utils.db_utils import read_todos, add_todo, update_todo_status, delete_todo, update_todo_hours, ensure_csv_exists
 from utils.charts import tasks_by_status_chart, upcoming_deadlines_table, tasks_risk_dataframe
 
 st.set_page_config(page_title="Study Todo Tracker", layout="wide")
+
+# Set timezone to New York
+NY_TZ = pytz.timezone('America/New_York')
+
+def get_ny_date():
+	"""Get current date in New York timezone"""
+	return datetime.now(NY_TZ).date()
+
+def get_ny_datetime():
+	"""Get current datetime in New York timezone"""
+	return datetime.now(NY_TZ)
 
 if "initialized" not in st.session_state:
 	ensure_csv_exists()
@@ -17,7 +29,7 @@ st.title("Study Todo Tracker")
 with st.sidebar:
 	st.header("Add Todo")
 	title = st.text_input("Title", placeholder="e.g., Read Chapter 3")
-	due = st.date_input("Due date", value=date.today() + timedelta(days=7))
+	due = st.date_input("Due date", value=get_ny_date() + timedelta(days=7))
 	est_hours = st.number_input("Estimated hours", min_value=0.0, max_value=200.0, value=2.0, step=0.5)
 	priority = st.selectbox("Priority", ["Low", "Medium", "High"], index=1)
 	if st.button("Add"):
@@ -186,7 +198,7 @@ with tab_dashboard:
 		df = pd.DataFrame(rows)
 		completed = len(df[df["status"] == "done"])
 		remaining = len(df[df["status"] == "todo"])
-		overdue = len(df[(df["status"] == "todo") & (pd.to_datetime(df["due_date"]) < pd.to_datetime(date.today()))])
+		overdue = len(df[(df["status"] == "todo") & (pd.to_datetime(df["due_date"]) < pd.to_datetime(get_ny_date()))])
 		
 		col1, col2, col3, col4 = st.columns(4)
 		with col1:
@@ -263,7 +275,7 @@ with tab_dashboard:
 			st.info("Add todos to see category hours")
 
 	st.subheader("Risk Analysis")
-	risk_df = tasks_risk_dataframe(rows, date.today())
+	risk_df = tasks_risk_dataframe(rows, get_ny_date())
 	if not risk_df.empty:
 		st.dataframe(risk_df, use_container_width=True)
 	else:
@@ -285,7 +297,7 @@ with tab_timetable:
 		df_view = pd.DataFrame(rows_tt)[["day","start_time","end_time","activity","focus"]]
 		# Today's Focus
 		from datetime import date as _date
-		today_name = _date.today().strftime("%A")
+		today_name = get_ny_date().strftime("%A")
 		st.subheader(f"Today's Focus — {today_name}")
 		df_today = df_view[df_view["day"] == today_name].copy()
 		if df_today.empty:

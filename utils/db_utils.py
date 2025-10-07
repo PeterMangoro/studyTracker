@@ -2,6 +2,7 @@ import csv
 import os
 from datetime import datetime
 from typing import List, Dict, Any
+import pytz
 
 # Robust ULID generator with fallback
 try:
@@ -135,7 +136,7 @@ def import_todos_csv(content: bytes, mode: str = "append") -> Dict[str, Any]:
 			"hours_logged": f"{float(row.get('hours_logged') or 0):.2f}",
 			"priority": (row.get("priority") or "Medium").strip() or "Medium",
 			"status": (row.get("status") or "todo").strip() or "todo",
-			"created_at": (row.get("created_at") or datetime.utcnow().isoformat()),
+			"created_at": (row.get("created_at") or datetime.now(pytz.timezone('America/New_York')).isoformat()),
 		}
 		existing.append(new_row)
 		added += 1
@@ -154,7 +155,7 @@ def add_todo(title: str, due_date: str, estimated_hours: float, priority: str) -
 		"hours_logged": f"{0.0:.2f}",
 		"priority": priority,
 		"status": "todo",
-		"created_at": datetime.utcnow().isoformat(),
+		"created_at": datetime.now(pytz.timezone('America/New_York')).isoformat(),
 	}
 	rows.append(new_row)
 	write_todos(rows)
