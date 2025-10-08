@@ -22,7 +22,9 @@ CSV_HEADERS = [
 	"hours_logged",
 	"priority",
 	"status",
+	"steps",
 	"created_at",
+	"completed_at",
 ]
 
 CSV_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "todos.csv")
@@ -95,7 +97,9 @@ def csv_template_bytes() -> bytes:
 		"hours_logged": "0.0",
 		"priority": "Medium",
 		"status": "todo",
+		"steps": "- Research requirements\n- Create wireframes\n- Implement prototype",
 		"created_at": "",
+		"completed_at": "",
 	})
 	return sio.getvalue().encode("utf-8")
 
@@ -136,7 +140,9 @@ def import_todos_csv(content: bytes, mode: str = "append") -> Dict[str, Any]:
 			"hours_logged": f"{float(row.get('hours_logged') or 0):.2f}",
 			"priority": (row.get("priority") or "Medium").strip() or "Medium",
 			"status": (row.get("status") or "todo").strip() or "todo",
+			"steps": (row.get("steps") or "").strip(),
 			"created_at": (row.get("created_at") or datetime.now(pytz.timezone('America/New_York')).isoformat()),
+			"completed_at": (row.get("completed_at") or "").strip(),
 		}
 		existing.append(new_row)
 		added += 1
@@ -145,7 +151,7 @@ def import_todos_csv(content: bytes, mode: str = "append") -> Dict[str, Any]:
 	return {"ok": True, "added": added, "total": len(existing)}
 
 
-def add_todo(title: str, due_date: str, estimated_hours: float, priority: str) -> Dict[str, Any]:
+def add_todo(title: str, due_date: str, estimated_hours: float, priority: str, steps: str = "") -> Dict[str, Any]:
 	rows = read_todos()
 	new_row = {
 		"id": generate_ulid(),
@@ -155,7 +161,9 @@ def add_todo(title: str, due_date: str, estimated_hours: float, priority: str) -
 		"hours_logged": f"{0.0:.2f}",
 		"priority": priority,
 		"status": "todo",
+		"steps": steps.strip(),
 		"created_at": datetime.now(pytz.timezone('America/New_York')).isoformat(),
+		"completed_at": "",
 	}
 	rows.append(new_row)
 	write_todos(rows)
@@ -167,6 +175,21 @@ def update_todo_status(todo_id: str, status: str) -> None:
 	for row in rows:
 		if row["id"] == todo_id:
 			row["status"] = status
+			# Auto-log hours and set completion timestamp when marking as done
+			if status == "done":
+				# Set completion timestamp
+				row["completed_at"] = datetime.now(pytz.timezone('America/New_York')).isoformat()
+				# Auto-log hours if not already logged
+				if float(row.get("hours_logged", 0)) == 0:
+					estimated_hours = float(row.get("estimated_hours", 0))
+					if estimated_hours == 0:
+						# Default to 1 hour if no estimated hours
+						estimated_hours = 1.0
+						row["estimated_hours"] = "1.00"
+					row["hours_logged"] = f"{estimated_hours:.2f}"
+			else:
+				# Clear completion timestamp if marking as not done
+				row["completed_at"] = ""
 			break
 	write_todos(rows)
 
@@ -177,6 +200,46 @@ def update_todo_hours(todo_id: str, hours_delta: float) -> None:
 		if row["id"] == todo_id:
 			current = float(row.get("hours_logged", 0) or 0)
 			row["hours_logged"] = f"{max(0.0, current + hours_delta):.2f}"
+			break
+	write_todos(rows)
+
+
+def update_todo_estimated_hours(todo_id: str, estimated_hours) -> None:
+	"""Update the estimated hours for a specific todo."""
+	rows = read_todos()
+	for row in rows:
+		if row["id"] == todo_id:
+			# Convert to float to handle string inputs
+			estimated_hours_float = float(estimated_hours) if estimated_hours is not None else 0.0
+			row["estimated_hours"] = f"{max(0.0, estimated_hours_float):.2f}"
+			break
+	write_todos(rows)
+
+
+def update_todo_due_date(todo_id: str, due_date) -> None:
+	"""Update the due date for a specific todo."""
+	rows = read_todos()
+	for row in rows:
+		if row["id"] == todo_id:
+			# Convert to string format if it's a datetime object
+			if hasattr(due_date, 'strftime'):
+				row["due_date"] = due_date.strftime('%Y-%m-%d')
+			else:
+				row["due_date"] = str(due_date)
+			break
+	write_todos(rows)
+
+
+def update_todo_completed_at(todo_id: str, completed_at) -> None:
+	"""Update the completion timestamp for a specific todo."""
+	rows = read_todos()
+	for row in rows:
+		if row["id"] == todo_id:
+			# Convert to string format if it's a datetime object
+			if hasattr(completed_at, 'strftime'):
+				row["completed_at"] = completed_at.strftime('%Y-%m-%dT%H:%M:%S')
+			else:
+				row["completed_at"] = str(completed_at) if completed_at else ""
 			break
 	write_todos(rows)
 
@@ -440,3 +503,111 @@ def seed_timetable_from_csv(file_path: str) -> Dict[str, Any]:
 		return {"ok": False, "error": "No rows parsed"}
 	write_timetable(rows_new)
 	return {"ok": True, "added": len(rows_new)}
+
+
+# --- Steps helpers ---
+
+def parse_steps(steps_str: str) -> List[Dict[str, Any]]:
+	"""Parse steps from a string format. Each line starting with '-' or '✓' is a step."""
+	if not steps_str or not steps_str.strip():
+		return []
+	
+	steps = []
+	lines = steps_str.strip().split('\n')
+	for i, line in enumerate(lines):
+		line = line.strip()
+		if line.startswith('-') or line.startswith('✓'):
+			# Check if step is completed (starts with ✓)
+			completed = line.startswith('✓')
+			# Remove the prefix and get the description
+			step_text = line[1:].strip() if completed else line[1:].strip()
+			steps.append({
+				"id": f"step_{i}",
+				"description": step_text,
+				"completed": completed,
+				"order": i
+			})
+	return steps
+
+
+def format_steps(steps_list: List[Dict[str, Any]]) -> str:
+	"""Format steps list back to string format."""
+	if not steps_list:
+		return ""
+	
+	lines = []
+	for step in sorted(steps_list, key=lambda x: x.get("order", 0)):
+		status = "✓" if step.get("completed", False) else "-"
+		lines.append(f"{status} {step.get('description', '')}")
+	return "\n".join(lines)
+
+
+def update_todo_step(todo_id: str, step_id: str, completed: bool) -> None:
+	"""Update a specific step's completion status and auto-complete todo if all steps done."""
+	rows = read_todos()
+	for row in rows:
+		if row["id"] == todo_id:
+			steps = parse_steps(row.get("steps", ""))
+			for step in steps:
+				if step["id"] == step_id:
+					step["completed"] = completed
+					break
+			row["steps"] = format_steps(steps)
+			
+			# Auto-complete todo if all steps are completed
+			if steps and all(step.get("completed", False) for step in steps):
+				row["status"] = "done"
+				# Set completion timestamp
+				row["completed_at"] = datetime.now(pytz.timezone('America/New_York')).isoformat()
+				# Auto-log hours when auto-completing
+				if float(row.get("hours_logged", 0)) == 0:
+					estimated_hours = float(row.get("estimated_hours", 0))
+					if estimated_hours == 0:
+						# Default to 1 hour if no estimated hours
+						estimated_hours = 1.0
+						row["estimated_hours"] = "1.00"
+					row["hours_logged"] = f"{estimated_hours:.2f}"
+			
+			break
+	write_todos(rows)
+
+
+def get_todo_steps(todo_id: str) -> List[Dict[str, Any]]:
+	"""Get steps for a specific todo. If no steps exist but title has dash, auto-create step."""
+	rows = read_todos()
+	for row in rows:
+		if row["id"] == todo_id:
+			steps = parse_steps(row.get("steps", ""))
+			# If no steps but title has dash, auto-create a step and save it
+			if not steps and " - " in row.get("title", ""):
+				title_parts = row["title"].split(" - ", 1)
+				if len(title_parts) > 1:
+					step_description = title_parts[1].strip()
+					steps = [{
+						"id": "step_0",
+						"description": step_description,
+						"completed": False,
+						"order": 0
+					}]
+					# Save the auto-generated step back to the CSV
+					row["steps"] = format_steps(steps)
+					write_todos(rows)
+			return steps
+	return []
+
+
+def get_todo_progress(todo_id: str) -> Dict[str, Any]:
+	"""Get progress information for a todo with steps."""
+	steps = get_todo_steps(todo_id)
+	if not steps:
+		return {"total": 0, "completed": 0, "percentage": 0}
+	
+	completed = sum(1 for step in steps if step.get("completed", False))
+	total = len(steps)
+	percentage = (completed / total * 100) if total > 0 else 0
+	
+	return {
+		"total": total,
+		"completed": completed,
+		"percentage": round(percentage, 1)
+	}

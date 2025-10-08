@@ -1,4 +1,10 @@
-id,title,due_date,estimated_hours,hours_logged,priority,status,created_at
-01K6XMHQSJ5Q0E6W1BC5ADRGW7,Cloud Computing / Project / understand project outline,2025-10-06,1.00,0.00,Medium,done,2025-10-06T20:48:59.186387
-01K6XMHQSJDV2AAFAABG3KDFCN,Cloud Computing / Project / understand the aws services,2025-10-06,1.00,0.00,Medium,todo,2025-10-06T20:48:59.186422
-01K6XMHQSJEVFF3DWWN70RM1K6,Computational Maths / Lab 6,2025-10-06,1.50,2.00,High,done,2025-10-06T20:48:59.186444
+id,title,due_date,estimated_hours,hours_logged,priority,status,steps,created_at,completed_at
+01K6XMHQSJ5Q0E6W1BC5ADRGW7,Cloud Computing (Project) - Understand project outline,2025-10-06,1.00,1.50,Medium,done,✓ Understand project outline,2025-10-06T20:48:59.186387,2025-10-06
+01K6XMHQSJDV2AAFAABG3KDFCN,Cloud Computing (Project) - Understand the AWS services,2025-10-06,1.00,1.00,Medium,done,✓ Understand the AWS services,2025-10-06T20:48:59.186422,2025-10-06
+01K6XMHQSJEVFF3DWWN70RM1K6,Computational Math - Lab 6,2025-10-06,1.50,3.00,High,done,,2025-10-06T20:48:59.186444,2025-10-06
+01K6XMHQSJ5Q0E6W1BC5ADRGW8,Cloud Computing (Project) - Confirm everyone wants project idea,2025-10-08,1.00,0.00,High,todo,"✓ Confirm everyone wants project idea
+✓ Share project code base with group
+✓ Help people with setting up",2025-10-07T00:00:00.000000,
+01K6XMHQSJ5Q0E6W1BC5ADRGW1,Computational Math - Assignment 6,2025-10-08,1.00,0.00,High,todo,- Assignment 6,2025-10-07T00:00:00.000000,
+01K6XMHQSJ5Q0E6W1BC5ADRGW2,Cloud Computing (Theory) - AWS Cloud Practitioner Module 3 Introduction to Serverless Computing,2025-10-08,1.00,0.00,Medium,todo,- AWS Cloud Practitioner Module 3 Introduction,2025-10-07T00:00:00.000000,
+01K6XMHQSJ5Q0E6W1BC5ADRGW4,Driving Lessons,2025-10-08,1.00,0.00,Medium,todo,,2025-10-07T00:00:00.000000,
