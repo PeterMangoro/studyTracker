@@ -1,8 +1,10 @@
 import csv
 import os
 from datetime import datetime
+from datetime import date as _date
 from typing import List, Dict, Any
 import pytz
+from dateutil import parser as dtparser
 
 # Robust ULID generator with fallback
 try:
@@ -132,6 +134,17 @@ def import_todos_csv(content: bytes, mode: str = "append") -> Dict[str, Any]:
 			title_csv = " / ".join(parts)
 		if not title_csv:
 			continue
+		# Normalize completed_at to YYYY-MM-DD if provided
+		completed_at_raw = (row.get("completed_at") or "").strip()
+		if completed_at_raw:
+			try:
+				completed_at_parsed = dtparser.parse(completed_at_raw)
+				completed_at_norm = completed_at_parsed.date().isoformat()
+			except Exception:
+				completed_at_norm = completed_at_raw[:10]
+		else:
+			completed_at_norm = ""
+
 		new_row = {
 			"id": (row.get("id") or "").strip() or generate_ulid(),
 			"title": title_csv,
@@ -142,7 +155,7 @@ def import_todos_csv(content: bytes, mode: str = "append") -> Dict[str, Any]:
 			"status": (row.get("status") or "todo").strip() or "todo",
 			"steps": (row.get("steps") or "").strip(),
 			"created_at": (row.get("created_at") or datetime.now(pytz.timezone('America/New_York')).isoformat()),
-			"completed_at": (row.get("completed_at") or "").strip(),
+			"completed_at": completed_at_norm,
 		}
 		existing.append(new_row)
 		added += 1
@@ -177,8 +190,8 @@ def update_todo_status(todo_id: str, status: str) -> None:
 			row["status"] = status
 			# Auto-log hours and set completion timestamp when marking as done
 			if status == "done":
-				# Set completion timestamp
-				row["completed_at"] = datetime.now(pytz.timezone('America/New_York')).isoformat()
+				# Set completion date (YYYY-MM-DD)
+				row["completed_at"] = datetime.now(pytz.timezone('America/New_York')).date().isoformat()
 				# Auto-log hours if not already logged
 				if float(row.get("hours_logged", 0)) == 0:
 					estimated_hours = float(row.get("estimated_hours", 0))
@@ -235,11 +248,21 @@ def update_todo_completed_at(todo_id: str, completed_at) -> None:
 	rows = read_todos()
 	for row in rows:
 		if row["id"] == todo_id:
-			# Convert to string format if it's a datetime object
-			if hasattr(completed_at, 'strftime'):
-				row["completed_at"] = completed_at.strftime('%Y-%m-%dT%H:%M:%S')
+			# Normalize to date-only YYYY-MM-DD
+			value = completed_at
+			if hasattr(value, 'strftime'):
+				row["completed_at"] = value.strftime('%Y-%m-%d')
 			else:
-				row["completed_at"] = str(completed_at) if completed_at else ""
+				text = str(value).strip() if value else ""
+				if text:
+					try:
+						dt = dtparser.parse(text)
+						row["completed_at"] = dt.date().isoformat()
+					except Exception:
+						# Fallback: take first 10 chars assuming YYYY-MM-DD prefix
+						row["completed_at"] = text[:10]
+				else:
+					row["completed_at"] = ""
 			break
 	write_todos(rows)
 
@@ -557,8 +580,8 @@ def update_todo_step(todo_id: str, step_id: str, completed: bool) -> None:
 			# Auto-complete todo if all steps are completed
 			if steps and all(step.get("completed", False) for step in steps):
 				row["status"] = "done"
-				# Set completion timestamp
-				row["completed_at"] = datetime.now(pytz.timezone('America/New_York')).isoformat()
+				# Set completion date (YYYY-MM-DD)
+				row["completed_at"] = datetime.now(pytz.timezone('America/New_York')).date().isoformat()
 				# Auto-log hours when auto-completing
 				if float(row.get("hours_logged", 0)) == 0:
 					estimated_hours = float(row.get("estimated_hours", 0))

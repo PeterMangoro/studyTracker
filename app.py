@@ -408,10 +408,13 @@ with tab_logs:
 with tab_dashboard:
 	st.subheader("Overview")
 	
+	# Always fetch fresh data for dashboard to reflect latest state
+	rows_db = read_todos()
+
 	# KPIs
-	if rows:
+	if rows_db:
 		import pandas as pd
-		df = pd.DataFrame(rows)
+		df = pd.DataFrame(rows_db)
 		# Ensure completed_at column exists (for backward compatibility)
 		if "completed_at" not in df.columns:
 			df["completed_at"] = ""
@@ -431,7 +434,7 @@ with tab_dashboard:
 	
 	# Charts
 	# Hours logged per day (line chart)
-	if rows:
+	if rows_db:
 		import plotly.express as px
 		# Convert hours_logged to numeric to avoid string concatenation
 		df["hours_logged"] = pd.to_numeric(df["hours_logged"], errors='coerce').fillna(0)
@@ -465,7 +468,7 @@ with tab_dashboard:
 	st.subheader("Additional Insights")
 	
 	# Late completion trends chart
-	if rows:
+	if rows_db:
 		import plotly.express as px
 		import plotly.graph_objects as go
 		
@@ -481,6 +484,8 @@ with tab_dashboard:
 				completed_with_dates["completed_at"], errors="coerce", utc=True
 			).dt.tz_convert(NY_TZ).dt.tz_localize(None)
 			
+			# Drop rows where dates couldn't be parsed
+			completed_with_dates = completed_with_dates.dropna(subset=["due_date_parsed", "completed_date_parsed"]).copy()
 			# Calculate delay in days
 			completed_with_dates["delay_days"] = (completed_with_dates["completed_date_parsed"] - completed_with_dates["due_date_parsed"]).dt.days
 			
@@ -521,7 +526,7 @@ with tab_dashboard:
 	col1, col2 = st.columns(2)
 	with col1:
 		# Completed vs Uncompleted by category bar chart
-		if rows:
+		if rows_db:
 			import plotly.express as px
 			def extract_category(title: str) -> str:
 				title_str = str(title).strip()
@@ -550,7 +555,7 @@ with tab_dashboard:
 	
 	with col2:
 		# Completed vs Estimated hours per category (grouped bar chart)
-		if rows:
+		if rows_db:
 			import plotly.express as px
 			import plotly.graph_objects as go
 			def extract_category(title: str) -> str:
@@ -628,7 +633,7 @@ with tab_dashboard:
 	st.subheader("Category Timing Analysis")
 	
 	# Create category timing analysis table
-	if rows:
+	if rows_db:
 		# Filter for completed todos with both due dates and completion dates
 		completed_with_dates = df[(df["status"] == "done") & (df["completed_at"].notna()) & (df["completed_at"] != "") & (df["due_date"].notna()) & (df["due_date"] != "")]
 		
@@ -641,6 +646,8 @@ with tab_dashboard:
 				completed_with_dates["completed_at"], errors="coerce", utc=True
 			).dt.tz_convert(NY_TZ).dt.tz_localize(None)
 			
+			# Drop rows where dates couldn't be parsed
+			completed_with_dates = completed_with_dates.dropna(subset=["due_date_parsed", "completed_date_parsed"]).copy()
 			# Calculate delay in days
 			completed_with_dates["delay_days"] = (completed_with_dates["completed_date_parsed"] - completed_with_dates["due_date_parsed"]).dt.days
 			
@@ -665,6 +672,8 @@ with tab_dashboard:
 			timing_analysis = []
 			for category in completed_with_dates["category"].unique():
 				category_data = completed_with_dates[completed_with_dates["category"] == category]
+				# Ensure we only count rows with a valid delay value
+				category_data = category_data[category_data["delay_days"].notna()]
 				
 				# Count on-time (delay <= 0) and missed (delay > 0)
 				on_time_count = len(category_data[category_data["delay_days"] <= 0])

@@ -7,4 +7,4 @@ id,title,due_date,estimated_hours,hours_logged,priority,status,steps,created_at,
 ✓ Help people with setting up",2025-10-07T00:00:00.000000,
 01K6XMHQSJ5Q0E6W1BC5ADRGW1,Computational Math - Assignment 6,2025-10-08,1.00,0.00,High,todo,- Assignment 6,2025-10-07T00:00:00.000000,
 01K6XMHQSJ5Q0E6W1BC5ADRGW2,Cloud Computing (Theory) - AWS Cloud Practitioner Module 3 Introduction to Serverless Computing,2025-10-08,1.00,0.00,Medium,todo,- AWS Cloud Practitioner Module 3 Introduction,2025-10-07T00:00:00.000000,
-01K6XMHQSJ5Q0E6W1BC5ADRGW4,Driving Lessons,2025-10-08,1.00,0.00,Medium,todo,,2025-10-07T00:00:00.000000,
+01K6XMHQSJ5Q0E6W1BC5ADRGW4,Driving Lessons,2025-10-08,1.00,1.00,Medium,done,,2025-10-07T00:00:00.000000,2025-10-08
