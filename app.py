@@ -440,8 +440,13 @@ with tab_dashboard:
 		completed_df = df[(df["status"] == "done") & (df["hours_logged"] > 0) & (df["completed_at"].notna()) & (df["completed_at"] != "")]
 		
 		if not completed_df.empty:
-			# Convert completed_at to date
-			completed_df["completed_date"] = pd.to_datetime(completed_df["completed_at"]).dt.date
+			# Convert completed_at to date (handle mixed formats + timezone)
+			completed_df["completed_date"] = (
+				pd.to_datetime(completed_df["completed_at"], errors="coerce", utc=True)
+				.dt.tz_convert(NY_TZ)
+				.dt.tz_localize(None)
+				.dt.date
+			)
 			daily_hours = completed_df.groupby("completed_date")["hours_logged"].sum().reset_index()
 			
 			# Round to 1 decimal place
@@ -468,9 +473,13 @@ with tab_dashboard:
 		completed_with_dates = df[(df["status"] == "done") & (df["completed_at"].notna()) & (df["completed_at"] != "") & (df["due_date"].notna()) & (df["due_date"] != "")]
 		
 		if not completed_with_dates.empty:
-			# Convert dates
-			completed_with_dates["due_date_parsed"] = pd.to_datetime(completed_with_dates["due_date"])
-			completed_with_dates["completed_date_parsed"] = pd.to_datetime(completed_with_dates["completed_at"])
+			# Convert dates (robust to mixed formats and timezones)
+			completed_with_dates["due_date_parsed"] = pd.to_datetime(
+				completed_with_dates["due_date"], errors="coerce"
+			)
+			completed_with_dates["completed_date_parsed"] = pd.to_datetime(
+				completed_with_dates["completed_at"], errors="coerce", utc=True
+			).dt.tz_convert(NY_TZ).dt.tz_localize(None)
 			
 			# Calculate delay in days
 			completed_with_dates["delay_days"] = (completed_with_dates["completed_date_parsed"] - completed_with_dates["due_date_parsed"]).dt.days
@@ -624,9 +633,13 @@ with tab_dashboard:
 		completed_with_dates = df[(df["status"] == "done") & (df["completed_at"].notna()) & (df["completed_at"] != "") & (df["due_date"].notna()) & (df["due_date"] != "")]
 		
 		if not completed_with_dates.empty:
-			# Convert dates
-			completed_with_dates["due_date_parsed"] = pd.to_datetime(completed_with_dates["due_date"])
-			completed_with_dates["completed_date_parsed"] = pd.to_datetime(completed_with_dates["completed_at"])
+			# Convert dates (robust to mixed formats and timezones)
+			completed_with_dates["due_date_parsed"] = pd.to_datetime(
+				completed_with_dates["due_date"], errors="coerce"
+			)
+			completed_with_dates["completed_date_parsed"] = pd.to_datetime(
+				completed_with_dates["completed_at"], errors="coerce", utc=True
+			).dt.tz_convert(NY_TZ).dt.tz_localize(None)
 			
 			# Calculate delay in days
 			completed_with_dates["delay_days"] = (completed_with_dates["completed_date_parsed"] - completed_with_dates["due_date_parsed"]).dt.days
