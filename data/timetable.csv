@@ -1,15 +1,14 @@
 id,day,start_time,end_time,activity,focus
-01K6XJA3NSHT28WBWC24D9NF6K,Monday,07:00,08:00,Gym + Morning Routine + Breakfast,Personal well-being
+01K6XJA3NSHT28WBWC24D9NF6K,Monday,07:00,10:30,Gym + Morning Routine + Breakfast,Personal well-being
 01K6XJA3NS895GZCBYJXZMHG17,Monday,10:30,11:30,School Project,Data Product Design & Taskconnect
 01K6XJA3NTY2C81KQNEBV6W8PN,Monday,11:30,12:30,Break,
 01K6XJA3NTBBH0AAJH8X542GRF,Monday,12:30,13:30,School Work,Cloud Computing
 01K6XJA3NT5065NK98BXGH5QKH,Monday,13:30,15:00,Lunch,
 01K6XJA3NT5S60J70ZCE5FZPFH,Monday,15:00,23:00,Lecture,
-01K6XJA3NT81QX8MN3F8D085ZZ,Tuesday,07:00,08:00,Gym + Morning Routine + Breakfast,Personal well-being
+01K6XJA3NT81QX8MN3F8D085ZZ,Tuesday,07:00,09:00,Gym + Morning Routine + Breakfast,Personal well-being
 01K6XJA3NVDD7MWDBXFTQR65DC,Tuesday,09:00,15:00,Lectures & Commute,
 01K6XJA3NVBCYMA7QF1EXVRCQW,Tuesday,15:00,20:00,Half-Day Off,
-01K6XJA3NVD3MBFEZJYQ5Z7MC0,Wednesday,07:00,08:00,Gym,Personal well-being
-01K6XJA3NWTSWQQXFQ0SNP7K9N,Wednesday,08:00,10:30,Gym + Morning Routine + Breakfast,
+01K6XJA3NVD3MBFEZJYQ5Z7MC0,Wednesday,07:00,10:30,Gym,Personal well-being
 01K6XJA3NWVCYCRKNKVM73DCDV,Wednesday,10:30,11:30,School Project Deep Work,Data Product Design or Driving License
 01K6XJA3NWZ6CTEPSH3TZRENSR,Wednesday,11:30,12:30,Break,
 01K6XJA3NW7YCE454CBXAFAQYM,Wednesday,12:30,13:30,School Project Deep Work,Cloud Computing
@@ -20,16 +19,16 @@ id,day,start_time,end_time,activity,focus
 01K6XJA3NX1WGYN8VCE239Q5GR,Wednesday,17:30,18:30,Dinner / Relax,
 01K6XJA3NYMNCWW648B96MWH4D,Wednesday,18:30,19:30,Tutorials,Aws Cloud Practisioner
 01K6XJA3NYBA3F3R0AA61X81Y1,Wednesday,19:30,20:30,Break,
-01K6XJA3NYMT4HAW83QDBQNX1H,Thursday,07:00,08:00,Gym + Morning Routine + Breakfast,Personal well-being
+01K6XJA3NYMT4HAW83QDBQNX1H,Thursday,07:00,10:30,Gym + Morning Routine + Breakfast,Personal well-being
 01K6XJA3NYD4KQ8V8FKXD9SR1T,Thursday,10:30,11:30,School Project Deep Work,Cloud Computing
 01K6XJA3NZB62ZSS6QB0DE67EV,Thursday,11:30,12:30,Break,
-01K6XJA3NZGRAEP4QMMCWNRDGC,Thursday,12:30,13:30,Personal Projects,Fraud Detection
+01K6XJA3NZGRAEP4QMMCWNRDGC,Thursday,12:30,13:30,Personal Projects,Job Hunt - LinkedIn Profile
 01K6XJA3NZXRYVQ52GZ3Q93NAB,Thursday,13:30,14:30,Lunch,
 01K6XJA3NZTKB60VWDFGSQ5H8W,Thursday,14:30,15:30,Assignments,Computational Maths Lab
 01K6XJA3NZ3Y8CPZR874JEV5EZ,Thursday,15:30,16:30,Break,
-01K6XJA3P0BK7GET2A8QM06EMC,Thursday,16:30,17:30,Personal Projects,TaskConnect
+01K6XJA3P0BK7GET2A8QM06EMC,Thursday,16:30,17:30,Personal Projects,Driving Lessons
 01K6XJA3P0Z7Q1KTS8HRW5D3WC,Thursday,17:30,18:30,Dinner / Relax,
-01K6XJA3P0QDN7P1RW4RN407AR,Thursday,18:30,19:30,Tutorials,Harvad Data Science
+01K6XJA3P0QDN7P1RW4RN407AR,Thursday,18:30,19:30,Tutorials,learn Python
 01K6XJA3P0RMR85VXTP3YB2NHE,Thursday,19:30,20:30,Break,
 01K6XJA3P04AESFHEC503X2J6K,Friday,07:00,10:30,Gym + Morning Routine + Breakfast,Personal well-being
 01K6XJA3P1PDHKZSYG7YCAM4EM,Friday,10:30,11:30,School Work,Computational Maths
@@ -42,7 +41,7 @@ id,day,start_time,end_time,activity,focus
 01K6XJA3P25GQFVF2GQQST3QPY,Friday,17:30,18:30,Dinner / Relax,
 01K6XJA3P2BCS3B20J8CEVKMMH,Friday,18:30,19:30,Tutorials,Harvad Data Science
 01K6XJA3P34GN00AANER0TP6K4,Friday,19:30,20:30,Break,
-01K6XJA3P3T3S0ZX10YAAHK2V7,Saturday,07:00,08:00,Gym,Personal well-being
+01K6XJA3P3T3S0ZX10YAAHK2V7,Saturday,07:00,10:30,Gym,Personal well-being
 01K6XJA3P3CC6R5MHNPK3E80FV,Saturday,08:00,10:30,Gym + Morning Routine + Breakfast,
 01K6XJA3P34R681FY8HMZ8BNS1,Saturday,10:30,11:30,Personal Project Deep Work,TaskConnect
 01K6XJA3P41DZ3NSXS3X8B6WPX,Saturday,11:30,12:30,Break,
