@@ -11,7 +11,7 @@ st.set_page_config(page_title="Study Todo Tracker", layout="wide")
 
 # Set timezone to New York
 NY_TZ = pytz.timezone('America/New_York')
-
+#dddd
 def get_ny_date():
 	"""Get current date in New York timezone"""
 	return datetime.now(NY_TZ).date()
