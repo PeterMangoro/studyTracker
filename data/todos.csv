@@ -15,3 +15,6 @@ id,title,due_date,estimated_hours,hours_logged,priority,status,steps,created_at,
 01K75N48FDK1E1F0WPA4S1Y1CZ,Computational Math (Assignment),2025-10-09,1.00,1.00,High,done,"✓ Finish assignment 6
 ✓ Submit assignment",2025-10-09T18:45:00Z,2025-10-09
 01K75N48FD797CBSH0BNB9ZTR7,Driving Lessons,2025-10-09,1.00,0.00,Low,todo,- YouTube tutorial cont,2025-10-09T18:45:00Z,
+01K77B8PW91K2BJNQ1HF1E2S32,Job Hunt (Start Ups),2025-10-10,3.00,0.00,High,todo,"- Apply for internships on start ups
+- Update indeed profile",2025-10-10T18:45:00Z,
+01K77B8PW94DR05MDPEKEHT1P2,Cloud Computing (Project),2025-10-10,1.00,0.00,High,todo,- Understand the Python code,2025-10-10T18:45:00Z,
