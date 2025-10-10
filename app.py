@@ -9,7 +9,7 @@ from utils.charts import tasks_by_status_chart, upcoming_deadlines_table, tasks_
 
 st.set_page_config(page_title="Study Todo Tracker", layout="wide")
 
-# Set timezone to New York 
+# Set timezone to New Y  ork 
 NY_TZ = pytz.timezone('America/New_York')
 
 def get_ny_date():
